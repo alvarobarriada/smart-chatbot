@@ -1,10 +1,12 @@
 [project]
 name = "smartbot"
 version = "0.1.0"
-description = "odular and extensible chatbot core with pluggable providers and memory backends"
+description = "Modular and extensible chatbot core with pluggable providers and memory backends"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.2.1",
+]
 
 [build-system]
 requires = ["setuptools"]
