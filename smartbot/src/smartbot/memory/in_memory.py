@@ -1,25 +1,29 @@
-from typing import Any
+import time
 
-from .base import MemoryBackend
+from typing import Literal
+
+from smartbot.core.interfaces import MemoryBackend, Message, Role
 
 
 class InMemoryBackend(MemoryBackend):
     """
-    Guarda el historial en una lista de Python.
-    Util para tests o sesiones efimeras.
+    In-memory conversation storage.
+    Useful for testing or ephemeral sessions.
     """
 
-    def __init__(self):
-        # La "base de datos" es una simple lista
-        self._messages: list[dict[str, Any]] = []
+    def __init__(self) -> None:
+        self._messages: list[Message] = []
 
-    def add_message(self, role: str, content: str) -> None:
-        message = {"role": role, "content": content}
+    def add_message(self, role: Role, content: str) -> None:
+        message: Message = {
+            "role": role,
+            "content": content,
+            "timestamp": time.time(),
+        }
         self._messages.append(message)
 
-    def get_context(self) -> list[dict[str, Any]]:
-        # Devolvemos una copia para evitar modificaciones accidentales fuera
+    def get_history(self) -> list[Message]:
         return self._messages.copy()
 
     def clear(self) -> None:
-        self._messages = []
+        self._messages.clear()

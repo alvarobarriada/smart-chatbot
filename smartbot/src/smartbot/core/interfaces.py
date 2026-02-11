@@ -9,10 +9,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Literal, TypedDict  # sugeridos por robustez en tipado (vs Set/Dict)
 
+Role = Literal["user", "assistant", "system"]
 
 class Message(TypedDict):
     """Represents a single chat message."""
-    role: Literal["user", "assistant", "system"]
+    role: Role
     content: str
     timestamp: float
 
@@ -44,7 +45,7 @@ class MemoryBackend(ABC):
     """Abstract interface for conversation memory backends."""
 
     @abstractmethod
-    def add_message(self, role: str, content: str) -> None:
+    def add_message(self, role: Role, content: str) -> None:
         """Store a new message.
 
         :param role: Message role (user/assistant/system).
