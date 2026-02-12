@@ -1,6 +1,5 @@
-from typing import Any
-
 from .base import MemoryBackend
+from .models import Message, RoleType
 
 
 class InMemoryBackend(MemoryBackend):
@@ -11,13 +10,13 @@ class InMemoryBackend(MemoryBackend):
 
     def __init__(self):
         # La "base de datos" es una simple lista
-        self._messages: list[dict[str, Any]] = []
+        self._messages: list[Message] = []
 
-    def add_message(self, role: str, content: str) -> None:
-        message = {"role": role, "content": content}
-        self._messages.append(message)
+    def add_message(self, role: RoleType, content: str) -> None:
+        new_message = Message(role=role, content=content)
+        self._messages.append(new_message)
 
-    def get_context(self) -> list[dict[str, Any]]:
+    def get_context(self) -> list[Message]:
         # Devolvemos una copia para evitar modificaciones accidentales fuera
         return self._messages.copy()
 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any
+
+from .models import Message, RoleType
 
 
 class MemoryBackend(ABC):
@@ -9,16 +10,13 @@ class MemoryBackend(ABC):
     """
 
     @abstractmethod
-    def add_message(self, role: str, content: str) -> None:
+    def add_message(self, role: RoleType, content: str) -> None:
         """Guarda un mensaje nuevo (user o assistant)."""
-        pass
 
     @abstractmethod
-    def get_context(self) -> list[dict[str, Any]]:
+    def get_context(self) -> list[Message]:
         """Recupera el historial de mensajes para enviarlo al LLM."""
-        pass
 
     @abstractmethod
     def clear(self) -> None:
         """Borra la memoria."""
-        pass
