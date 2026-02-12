@@ -4,4 +4,114 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+]
+
+# =============================================================================
+# RUFF — Linter y formateador
+# =============================================================================
+# Documentación: https://docs.astral.sh/ruff/rules/
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    # --- Errores básicos (no negociables) ---
+    "E",       # pycodestyle errors (indentación, espacios, sintaxis)
+    "W",       # pycodestyle warnings
+    "F",       # pyflakes (imports sin usar, variables sin definir, etc.)
+
+    # --- Clean Code: naming y estilo ---
+    "N",       # pep8-naming (clases CamelCase, funciones snake_case, constantes UPPER)
+    "I",       # isort (imports ordenados y agrupados)
+    "UP",      # pyupgrade (usa sintaxis moderna de Python 3.12)
+
+    # --- Clean Code: complejidad y estructura ---
+    "C90",     # mccabe complexity (funciones demasiado complejas)
+    "B",       # flake8-bugbear (errores comunes y malas prácticas)
+    "SIM",     # flake8-simplify (simplifica código innecesariamente complejo)
+    "C4",      # flake8-comprehensions (list/dict comprehensions más limpias)
+    "RET",     # flake8-return (return statements innecesarios o confusos)
+    "PIE",     # flake8-pie (misc. linting para código más limpio)
+
+    # --- Clean Code: code smells ---
+    "T20",     # flake8-print (NO usar print → usar logging)
+    "ERA",     # eradicate (código comentado = code smell, bórralo)
+    "ARG",     # flake8-unused-arguments (argumentos que no se usan)
+
+    # --- Clean Code: funciones y clases ---
+    "PLR",     # pylint refactor (demasiados argumentos, demasiados returns, etc.)
+    "PLW",     # pylint warnings (variables shadowed, comparaciones peligrosas)
+
+    # --- Buenas prácticas Python moderno ---
+    "PTH",     # flake8-use-pathlib (Path() en vez de os.path)
+    "RUF",     # ruff-specific (reglas adicionales de calidad)
+]
+
+ignore = [
+    # --- Reglas que desactivamos con criterio ---
+    "PLR2004", # magic values en comparaciones — los alumnos usan Field(gt=0) en Pydantic,
+               # no necesitan constantes para cada número en validadores y tests
+    "PLR0913", # demasiados argumentos en función — composición con inyección de dependencias
+               # a veces requiere 4-5 parámetros en __init__, y eso está bien
+    "ARG002",  # argumento sin usar en método — necesario para cumplir Protocols donde
+               # la firma exige parámetros que una implementación concreta no usa
+    "RET504",  # asignación innecesaria antes de return — a veces mejora legibilidad:
+               # result = compute(); return result es más claro que return compute()
+]
+
+[tool.ruff.lint.per-file-ignores]
+# En tests se permiten cosas que en src no:
+"tests/**/*.py" = [
+    "ARG",     # argumentos sin usar (fixtures de pytest que se inyectan por nombre)
+    "PLR2004", # magic values en asserts (assert result == 42 es correcto en tests)
+    "T20",     # print en tests está bien para debugging rápido
+]
+
+[tool.ruff.lint.mccabe]
+# Complejidad ciclomática máxima por función.
+# Si una función supera esto, tiene demasiados if/elif/for anidados → refactoriza.
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+# Máximo de argumentos en una función. 5 es un buen límite general.
+# Si necesitas más, probablemente deberías agrupar en un dataclass/Pydantic model.
+max-args = 5
+# Máximo de return statements en una función.
+max-returns = 4
+# Máximo de ramas (if/elif/else) en una función.
+max-branches = 8
+
+[tool.ruff.lint.isort]
+known-first-party = ["nombre_del_proyecto"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+
+# =============================================================================
+# PYRIGHT — Type checking
+# =============================================================================
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"
+
+# Paths
+include = ["src", "tests"]
+
+# Reglas específicas
+reportMissingTypeStubs = false          # No exigir stubs para librerías externas
+reportUnknownMemberType = false         # Evita ruido con pandas/sklearn
+reportUnknownArgumentType = false       # Ídem
+reportMissingParameterType = "warning"  # Avisa si falta type hint en parámetro
+reportUnnecessaryIsInstance = "warning" # Avisa si isinstance() es redundante
