@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from smartbot.core.interfaces import LLMProvider, MemoryBackend
+from smartbot.utils.logger import get_logger
 
+logger = get_logger(__name__)
 
 class Agent:
     """Coordinates provider and memory backends.
@@ -30,14 +32,20 @@ class Agent:
         :raises ProviderError: If the provider fails to generate output.
         :raises MemoryError: If memory operations fail.
         """
+        logger.debug("Handling message from user")
+
+        self._memory.add_message("user", user_input)
+
         history = self._memory.get_history()
+        logger.debug("History length: %d", len(history))
 
         response = self._provider.generate_response(
             prompt=user_input,
             history=history,
         )
 
-        self._memory.add_message("user", user_input)
+        logger.debug("Generated response")
+
         self._memory.add_message("assistant", response)
 
         return response
