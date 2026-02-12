@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import MemoryError, ProviderError
-from smartbot.memory.in_memory import InMemory
+from smartbot.memory.in_memory import InMemoryBackend
 from smartbot.providers.echo_provider import EchoProvider
+from smartbot.utils.logger import get_logger, setup_logging
 
+setup_logging()
+logger = get_logger(__name__)
 
 def build_agent() -> Agent:
     """Create and configure the default Agent instance.
@@ -14,8 +17,8 @@ def build_agent() -> Agent:
     :returns: Configured Agent using in-memory storage and echo provider.
     """
     return Agent(
-        provider=EchoProvider(),
-        memory=InMemory(),
+        provider = EchoProvider(),
+        memory = InMemoryBackend(),
     )
 
 
@@ -23,13 +26,13 @@ def main() -> None:
     """Run SmartBot interactive CLI."""
     agent = build_agent()
 
-    print("SmartBot CLI — type /exit to quit.")
+    logger.info("SmartBot CLI — type /exit to quit.")
 
     while True:
         try:
             user_input = input("> ").strip()
         except KeyboardInterrupt:
-            print("\nExiting the chatbot.\n")
+            logger.info("SmartBot CLI — Exiting the chatbot.\n")
             break
 
         if not user_input:
@@ -41,13 +44,13 @@ def main() -> None:
         try:
             response = agent.handle_message(user_input)
         except ProviderError as exc:
-            print(f"Provider error: {exc}")
+            logger.error("Provider error: %s", exc)
             continue
         except MemoryError as exc:
-            print(f"Memory error: {exc}")
+            logger.error("Memory error: %s", exc)
             continue
 
-        print(response)
+        logger.info(response)
 
 
 if __name__ == "__main__":
