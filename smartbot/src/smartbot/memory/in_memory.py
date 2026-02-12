@@ -1,7 +1,5 @@
 import time
 
-from typing import Literal
-
 from smartbot.core.interfaces import MemoryBackend, Message, Role
 
 
