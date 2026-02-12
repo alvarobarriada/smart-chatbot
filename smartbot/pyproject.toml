@@ -16,14 +16,82 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+# =============================================================================
+# RUFF — Linter y formateador
+# =============================================================================
+
 [tool.ruff]
+line-length = 100
 target-version = "py312"
-line-length = 88
+src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
-ignore = []
+select = [
+    "E",
+    "W",
+    "F",
+    "N",
+    "I",
+    "UP",
+    "C90",
+    "B",
+    "SIM",
+    "C4",
+    "RET",
+    "PIE",
+    "T20",
+    "ERA",
+    "ARG",
+    "PLR",
+    "PLW",
+    "PTH",
+    "RUF",
+]
+
+ignore = [
+    "PLR2004",
+    "PLR0913",
+    "ARG002",
+    "RET504",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "ARG",
+    "PLR2004",
+    "T20",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 5
+max-returns = 4
+max-branches = 8
+
+[tool.ruff.lint.isort]
+known-first-party = ["smartbot"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+docstring-code-format = true
+
+# =============================================================================
+# PYRIGHT — Type checking
+# =============================================================================
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"
+
+include = ["src", "tests"]
+
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportMissingParameterType = "warning"
+reportUnnecessaryIsInstance = "warning"
