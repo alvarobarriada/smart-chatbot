@@ -1,7 +1,8 @@
 from openai import APIConnectionError, AuthenticationError, OpenAI
-from .models import OpenAIConfig
+
 from smartbot.memory.models import Message
 
+from .models import OpenAIConfig
 
 
 class OpenaiProvider:
@@ -22,7 +23,7 @@ class OpenaiProvider:
         :rtype: str
         """
 
-        messages_history = history + [Message("user",prompt)]
+        messages_history = [*history, Message("user", prompt)]
 
         response_llm = self.client.chat.completions.create(
             model = self.config.model_name,

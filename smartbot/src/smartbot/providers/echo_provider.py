@@ -1,4 +1,6 @@
-from base import BaseProvider
+from .base import BaseProvider
+from .models import EchoConfig, OllamaConfig, OpenAIConfig
+
 
 class EchoProvider(BaseProvider):
 
@@ -19,3 +21,7 @@ class EchoProvider(BaseProvider):
 
     def validate_config(self) -> bool:
         return True
+
+    def __init__(self, config: OpenAIConfig | OllamaConfig | EchoConfig) -> None:
+        self.config = config
+

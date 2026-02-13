@@ -1,6 +1,4 @@
 from dataclasses import asdict, dataclass  #, field
-
-# from datetime import datetime
 from typing import Literal
 
 # Definimos los roles permitidos como un tipo literal
@@ -14,7 +12,6 @@ class Message:
     """
     role: RoleType
     content: str
-    # timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def to_dict(self) -> dict:
         """Serializo el objeto para guardarlo en JSON."""

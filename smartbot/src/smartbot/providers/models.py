@@ -1,5 +1,7 @@
 from typing import Annotated, Literal
+
 from pydantic import BaseModel, Field, SecretStr
+
 
 class BaseConfig(BaseModel):
     """Settings shared with each model"""
