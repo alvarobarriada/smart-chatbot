@@ -1,3 +1,5 @@
+import pytest
+
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import LLMProvider
 from smartbot.memory.in_memory import InMemoryBackend
@@ -32,3 +34,41 @@ def test_agent_injection():
 
     assert agent._provider is provider
     assert agent._memory is memory
+
+
+# -----------------------------
+# Cobertura de normalización
+# -----------------------------
+
+class DataclassLikeMessage:
+    def __init__(self):
+        self.role = "user"
+        self.content = "hola"
+
+    def to_dict(self):
+        return {"role": self.role, "content": self.content}
+
+
+def test_agent_normalizes_dataclass_messages():
+    memory = InMemoryBackend()
+    provider = FakeProvider()
+    agent = Agent(provider=provider, memory=memory)
+
+    # Simulamos que la memoria devuelve objeto con to_dict()
+    memory._messages = [DataclassLikeMessage()]  # type: ignore
+
+    response = agent.handle_message("Test")
+
+    assert response == "echo: Test"
+
+
+def test_agent_raises_on_invalid_message_type():
+    memory = InMemoryBackend()
+    provider = FakeProvider()
+    agent = Agent(provider=provider, memory=memory)
+
+    # Insertamos objeto no serializable ni dict
+    memory._messages = [object()]  # type: ignore
+
+    with pytest.raises(TypeError):
+        agent.handle_message("Test")
