@@ -6,24 +6,44 @@ from smartbot.core.agent import Agent
 from smartbot.core.interfaces import MemoryError, ProviderError
 from smartbot.memory.in_memory import InMemoryBackend
 from smartbot.providers.echo_provider import EchoProvider
+from smartbot.providers.local_provider import OllamaProvider
+from smartbot.providers.models import ChatBotConfig
+from smartbot.providers.openai_provider import OpenaiProvider
 from smartbot.utils.logger import get_logger, setup_logging
+from smartbot.utils.yaml_loader import load_yaml_config
 
 setup_logging()
 logger = get_logger(__name__)
 
-def build_agent() -> Agent:
-    """Create and configure the default Agent instance.
+PROVIDER_REGISTRY = {
+    "echo": EchoProvider,
+    "ollama": OllamaProvider,
+    "openai": OpenaiProvider,
+}
 
-    :returns: Configured Agent using in-memory storage and echo provider.
-    """
+
+def build_agent(config_path: str = "config.yaml") -> Agent:
+    """Create and configure the Agent from YAML configuration."""
+
+    raw_config = load_yaml_config(config_path)
+    parsed_config = ChatBotConfig(**raw_config)
+
+    llm_config = parsed_config.llm
+
+    provider_class = PROVIDER_REGISTRY.get(llm_config.provider)
+
+    if provider_class is None:
+        raise ValueError(f"Unsupported provider: {llm_config.provider}")
+
+    provider = provider_class(config=llm_config)
+
     return Agent(
-        provider = EchoProvider(),
-        memory = InMemoryBackend(),
+        provider=provider,
+        memory=InMemoryBackend(),
     )
 
 
 def main() -> None:
-    """Run SmartBot interactive CLI."""
     agent = build_agent()
 
     logger.info("SmartBot CLI — type /exit to quit.")
@@ -32,7 +52,7 @@ def main() -> None:
         try:
             user_input = input("> ").strip()
         except KeyboardInterrupt:
-            logger.info("SmartBot CLI — Exiting the chatbot.\n")
+            logger.info("SmartBot CLI — Exiting the chatbot.")
             break
 
         if not user_input:
