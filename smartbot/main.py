@@ -5,6 +5,7 @@ from __future__ import annotations
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import MemoryError, ProviderError
 from smartbot.memory.in_memory import InMemoryBackend
+from smartbot.memory.json_memory import JsonFileMemory
 from smartbot.providers.echo_provider import EchoProvider
 from smartbot.providers.local_provider import OllamaProvider
 from smartbot.providers.models import ChatBotConfig
@@ -23,7 +24,14 @@ PROVIDER_REGISTRY = {
 
 
 def build_agent(config_path: str = "config.yaml") -> Agent:
-    """Create and configure the Agent from YAML configuration."""
+    """Create and configure the Agent from YAML configuration.
+
+    :param config_path: defaults to "config.yaml"
+    :type config_path: str
+    :raises: ValueError
+    :return: agent
+    :rtype: Agent
+    """
 
     raw_config = load_yaml_config(config_path)
     parsed_config = ChatBotConfig(**raw_config)
@@ -39,7 +47,8 @@ def build_agent(config_path: str = "config.yaml") -> Agent:
 
     return Agent(
         provider=provider,
-        memory=InMemoryBackend(),
+        memory = JsonFileMemory(file_path="history.json", max_messages=10)
+        #memory=InMemoryBackend(),
     )
 
 

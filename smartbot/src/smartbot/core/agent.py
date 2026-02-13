@@ -18,6 +18,15 @@ class Agent:
     """
 
     def __init__(self, provider: LLMProvider, memory: MemoryBackend) -> None:
+        """
+        Docstring for __init__
+
+        :param: self
+        :param provider: normally Echo (repeat message) or Ollama
+        :type provider: LLMProvider
+        :param memory: manages conversation's history
+        :type memory: MemoryBackend
+        """
         self._provider: LLMProvider = provider
         self._memory: MemoryBackend = memory
 
@@ -25,6 +34,12 @@ class Agent:
         """
         Normalize history into a list of serializable dictionaries.
         Supports both TypedDict and dataclass-based Message objects.
+
+        :param: history
+        :type history: list[Any]
+        :raises TypeError
+        :return: normalized
+        :rtype: list[dict[str, Any]]
         """
         normalized: list[dict[str, Any]] = []
 
@@ -41,7 +56,15 @@ class Agent:
         return normalized
 
     def handle_message(self, user_input: str) -> str:
-        """Process a user message and return assistant reply."""
+        """
+        Process a user message and return assistant reply.
+
+        :param self: Description
+        :param user_input: Description
+        :type user_input: str
+        :return: Description
+        :rtype: str
+        """
 
         logger.debug("Handling message from user")
 
