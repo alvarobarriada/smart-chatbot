@@ -1,4 +1,6 @@
 from base import BaseProvider
+from smartbot.memory.models import Message
+
 
 class EchoProvider(BaseProvider):
 
@@ -15,7 +17,7 @@ class EchoProvider(BaseProvider):
         :return: The generated text response.
         :rtype: str
         """
-        return prompt
+        return Message(role="assistant",content=prompt)
 
     def validate_config(self) -> bool:
         return True
