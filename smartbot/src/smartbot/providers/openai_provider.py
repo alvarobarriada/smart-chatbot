@@ -1,4 +1,7 @@
+from typing import List, cast
+
 from openai import APIConnectionError, AuthenticationError, OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
 from smartbot.memory.models import Message
 
@@ -10,7 +13,7 @@ class OpenaiProvider:
         self.config = config
         self.client = OpenAI(api_key=config.api_key.get_secret_value())
 
-    def generate_response(self, prompt: str, history: list[Message]) -> str|None:
+    def generate_response(self, prompt: str, history: list[Message]) -> Message|None:
         """
         Generates a response from the LLM by processing the current prompt and chat history.
 
@@ -27,11 +30,16 @@ class OpenaiProvider:
 
         response_llm = self.client.chat.completions.create(
             model = self.config.model_name,
-            messages=messages_history,
+            messages=cast(List[ChatCompletionMessageParam],[message.to_dict() for message in messages_history]),
             temperature=self.config.temperature,
             top_p=self.config.top_p,
         )
-        return response_llm.choices[0].message.content
+        text_response_llm = response_llm.choices[0].message.content
+        if (text_response_llm is None):
+            raise ValueError("No response from LLM")
+        assistant_message = Message(role="assistant",content=text_response_llm)
+
+        return assistant_message
 
     def validate_config(self) -> bool:
         """

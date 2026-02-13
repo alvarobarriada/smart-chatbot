@@ -8,6 +8,8 @@ class OllamaProvider:
         self.config = config
 
     def generate_response(self, prompt: str, history: list[dict[str, str]]) -> str:
+    #def generate_response(self, prompt: str, history: list[Message]) -> Message:
+
         """
         Generates a response from the LLM by processing the current prompt and chat history.
         """
@@ -22,7 +24,7 @@ class OllamaProvider:
             f"{self.config.base_url}/api/chat",
             json={
                 "model": self.config.model_name,
-                "messages": messages_history,
+                "messages": [message.to_dict() for message in messages_history],
                 "stream": False,
                 "options": {
                     "temperature": self.config.temperature,
@@ -30,10 +32,13 @@ class OllamaProvider:
                 },
             },
         )
-
         response_llm.raise_for_status()
 
         return response_llm.json()["message"]["content"]
+        #assistant_message = Message(role="assistant",content=response_llm.json()["message"]["content"])
+        #return assistant_message
+
+
 
     def validate_config(self) -> bool:
         try:

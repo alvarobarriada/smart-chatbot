@@ -1,10 +1,12 @@
 from .base import BaseProvider
 from .models import EchoConfig, OllamaConfig, OpenAIConfig
+#from base import BaseProvider
+#from smartbot.memory.models import Message
 
 
 class EchoProvider(BaseProvider):
 
-    def generate_response(self, prompt: str, history: list[dict[str, str]]) -> str:
+    def generate_response(self, prompt: str, history: list[dict[str, str]]) -> Message:
         """Processes the user input and conversation history to generate a contextually
         aware response.
 
@@ -17,7 +19,7 @@ class EchoProvider(BaseProvider):
         :return: The generated text response.
         :rtype: str
         """
-        return prompt
+        return Message(role="assistant",content=prompt)
 
     def validate_config(self) -> bool:
         return True
