@@ -1,5 +1,6 @@
-from smartbot.memory.models import Message
 from typing import Protocol
+
+from smartbot.memory.models import Message
 
 from .models import ModelConfig
 

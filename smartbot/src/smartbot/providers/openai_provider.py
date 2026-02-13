@@ -30,7 +30,8 @@ class OpenaiProvider:
 
         response_llm = self.client.chat.completions.create(
             model = self.config.model_name,
-            messages=cast(List[ChatCompletionMessageParam],[message.to_dict() for message in messages_history]),
+            messages=cast(List[ChatCompletionMessageParam],
+                          [message.to_dict() for message in messages_history]),
             temperature=self.config.temperature,
             top_p=self.config.top_p,
         )

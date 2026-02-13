@@ -1,7 +1,8 @@
+#from base import BaseProvider
+from smartbot.memory.models import Message
+
 from .base import BaseProvider
 from .models import EchoConfig, OllamaConfig, OpenAIConfig
-#from base import BaseProvider
-#from smartbot.memory.models import Message
 
 
 class EchoProvider(BaseProvider):
