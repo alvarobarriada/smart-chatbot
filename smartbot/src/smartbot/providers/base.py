@@ -1,3 +1,4 @@
+from smartbot.memory.models import Message
 from typing import Protocol
 from .models import ModelConfig
 
@@ -13,7 +14,7 @@ class BaseProvider(Protocol):
         """
         ...
 
-    def generate_response(self, prompt:str, history: list[dict[str,str]])-> str:
+    def generate_response(self, prompt:str, history: list[dict[str,str]])-> Message:
         """
         Generate a response based on user input and history.
 
