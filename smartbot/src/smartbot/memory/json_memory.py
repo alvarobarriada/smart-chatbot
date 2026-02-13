@@ -36,24 +36,27 @@ class JsonFileMemory(MemoryBackend):
         file_path: str = DEFAULT_HISTORY_FILE,
         max_messages: int = DEFAULT_CONTEXT_WINDOW,
     ):
+        if max_messages < 1:
+            raise ValueError("max_messages debe ser al menos 1.")
+
         self._file_path = Path(file_path)
         self._max_messages = max_messages
         self._messages: list[Message] = []
-        self._load_from_disk()
 
-    def _load_from_disk(self) -> None:
+        self._load_memory()
+
+    def _load_memory(self) -> None:
         """Carga el historial existente si el archivo existe."""
         if not self._file_path.exists():
             return
 
         try:
-            with self._file_path.open(encoding="utf-8") as file:
+            with self._file_path.open("r", encoding="utf-8") as file:
                 self._messages = json.load(file)
         except json.JSONDecodeError:
-            # Si el archivo esta corrupto, empezamos de cero
             self._messages = []
 
-    def _save_to_disk(self) -> None:
+    def _save_memory(self) -> None:
         """Guarda el estado actual en disco."""
         with self._file_path.open("w", encoding="utf-8") as file:
             json.dump(self._messages, file, indent=2, ensure_ascii=False)
@@ -66,12 +69,9 @@ class JsonFileMemory(MemoryBackend):
             "timestamp": time.time(),
         }
         self._messages.append(message)
-        self._save_to_disk()
+        self._save_memory()
 
     def get_history(self) -> list[Message]:
-        """
-        Devuelve solo los ultimos 'max_messages' para no saturar al LLM.
-        """
         return self._messages[-self._max_messages:]
 
     def clear(self) -> None:
