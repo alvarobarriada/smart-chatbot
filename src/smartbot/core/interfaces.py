@@ -7,7 +7,6 @@ with language model Providers and Memory backends.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Literal
 
@@ -15,7 +14,6 @@ from pydantic import BaseModel, Field, field_validator
 
 Role = Literal["user", "assistant", "system"]
 
-@dataclass(frozen=True)
 class Message(BaseModel):
     """
     Data Transfer Object (DTO) que representa un mensaje.
@@ -23,7 +21,10 @@ class Message(BaseModel):
     """
     role: Role
     content: str = Field(min_length=1)
-    #timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=datetime.now)
+
+    class Config:
+        frozen = True
 
     @field_validator('content')
     @classmethod
@@ -65,7 +66,7 @@ class MemoryBackend(ABC):
     """Abstract interface for conversation memory backends."""
 
     @abstractmethod
-    def add_message(self, message: Message) -> None:
+    def add_message(self, role: Role, content: str) -> None:
         """Store a new message.
 
         :param role: Message role (user/assistant/system).
