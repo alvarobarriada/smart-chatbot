@@ -43,14 +43,14 @@ class Agent:
         """
         normalized: list[dict[str, Any]] = []
 
-        for msg in history:
-            if isinstance(msg, dict):
-                normalized.append(msg)
-            elif hasattr(msg, "to_dict"):
-                normalized.append(msg.to_dict())
+        for message in history:
+            if isinstance(message, dict):
+                normalized.append(message)
+            elif hasattr(message, "to_dict"):
+                normalized.append(message.to_dict())
             else:
                 raise TypeError(
-                    f"Unsupported message type in history: {type(msg).__name__}"
+                    f"Unsupported message type in history: {type(message).__name__}"
                 )
 
         return normalized
@@ -59,22 +59,20 @@ class Agent:
         """
         Process a user message and return assistant reply.
 
-        :param self: Description
-        :param user_input: Description
+        :param self
+        :param user_input: whatever the user writes
         :type user_input: str
-        :return: Description
+        :return: assistant's response to user's request
         :rtype: str
         """
 
         logger.debug("Handling message from user")
 
-        # Guardar mensaje del usuario
         self._memory.add_message("user", user_input)
 
         history = self._memory.get_history()
         logger.debug("History length: %d", len(history))
 
-        # Normalizar antes de enviar al provider
         normalized_history = self._normalize_history(history)
 
         response = self._provider.generate_response(
@@ -84,7 +82,6 @@ class Agent:
 
         logger.debug("Generated response")
 
-        # Guardar respuesta del asistente
         self._memory.add_message("assistant", response)
 
         return response

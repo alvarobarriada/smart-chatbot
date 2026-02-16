@@ -1,13 +1,13 @@
 """Core interfaces for SmartBot.
 
 This module defines abstract base classes used by the Agent to interact
-with language model providers and memory backends.
+with language model Providers and Memory backends.
 """
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Literal, TypedDict  # sugeridos por robustez en tipado (vs Set/Dict)
+from typing import Literal, TypedDict
 
 Role = Literal["user", "assistant", "system"]
 
