@@ -42,9 +42,9 @@ class Agent:
 
         logger.debug("Handling message from user")
 
-        user_message = Message(role="user", content=user_input)
-        self._memory.add_message(user_message)
-        #self._memory.add_message("user", user_input)
+        # user_message = Message(role="user", content=user_input)
+        # self._memory.add_message(user_message)
+        self._memory.add_message("user", user_input)
 
         history = self._memory.get_history()
         logger.debug("History length: %d", len(history))
@@ -56,8 +56,8 @@ class Agent:
 
         logger.debug("Generated response")
 
-        assistant_message = Message(role="assistant", content=response)
-        self._memory.add_message(assistant_message)
-        #self._memory.add_message("assistant", response)
+        # assistant_message = Message(role="assistant", content=response)
+        # self._memory.add_message(assistant_message)
+        self._memory.add_message("assistant", response)
 
         return response

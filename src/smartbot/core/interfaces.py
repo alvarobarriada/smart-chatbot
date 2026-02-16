@@ -7,25 +7,36 @@ with language model Providers and Memory backends.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Literal
+
+from pydantic import BaseModel, Field, field_validator
 
 Role = Literal["user", "assistant", "system"]
 
 @dataclass(frozen=True)
-class Message:
+class Message(BaseModel):
     """
     Data Transfer Object (DTO) que representa un mensaje.
     Principio: Estructura de Datos (solo guarda datos, sin lógica).
     """
     role: Role
-    content: str
-    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    content: str = Field(min_length=1)
+    #timestamp: datetime = Field(default_factory=datetime.now)
+
+    @field_validator('content')
+    @classmethod
+    def clean_content(cls, v: str) -> str:
+        """Limpia espacios en blanco y valida que no quede vacío."""
+        cleaned = v.strip()
+        if not cleaned:
+            raise ValueError("El contenido no puede estar vacío (solo espacios)")
+        return cleaned
 
     def to_dict(self) -> dict:
         """Serializo el objeto para guardarlo en JSON."""
-        return asdict(self)
+        return self.model_dump()
 
 class ProviderError(RuntimeError):
     """Raised when a provider fails to generate a response."""
