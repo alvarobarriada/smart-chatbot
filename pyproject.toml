@@ -1,5 +1,5 @@
 [project]
-name = "smartbot"
+name = "smart-chatbot"
 version = "0.1.0"
 description = "Modular and extensible chatbot core with pluggable providers and memory backends"
 readme = "README.md"
@@ -23,6 +23,9 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
 
 # =============================================================================
 # RUFF — Linter y formateador
@@ -66,7 +69,7 @@ max-returns = 4
 max-branches = 8
 
 [tool.ruff.lint.isort]
-known-first-party = ["smartbot"]
+known-first-party = ["smart-chatbot"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -90,3 +93,4 @@ reportUnknownMemberType = false
 reportUnknownArgumentType = false
 reportMissingParameterType = "warning"
 reportUnnecessaryIsInstance = "warning"
+
