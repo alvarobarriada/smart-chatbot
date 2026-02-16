@@ -1,12 +1,12 @@
 from typing import Annotated, Literal
-
 from pydantic import BaseModel, Field, SecretStr
 
 
 class BaseConfig(BaseModel):
     """Settings shared with each model"""
-    temperature: float = 0.7
-    top_p: int = 40
+    temperature: float = Field(ge=0, le=1, default=0.7)
+    top_p: float = Field(ge=0, le=1, default=1)
+
 
 class OpenAIConfig(BaseConfig):
     """Settings for OpenAI"""
