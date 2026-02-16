@@ -1,5 +1,6 @@
-from smartbot.memory.models import Message
+from smartbot.core.interfaces import Message
 
+from datetime import datetime
 from .base import BaseProvider
 from .models import EchoConfig, OllamaConfig, OpenAIConfig
 
@@ -19,7 +20,7 @@ class EchoProvider(BaseProvider):
         :return: The generated text response.
         :rtype: str
         """
-        return Message(role="assistant",content=prompt)
+        return Message(role="assistant",content=prompt, timestamp=datetime.now())
 
     def validate_config(self) -> bool:
         return True
