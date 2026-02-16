@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import MemoryError, ProviderError
-from smartbot.memory.in_memory import InMemoryBackend
 from smartbot.memory.json_memory import JsonFileMemory
 from smartbot.providers.echo_provider import EchoProvider
 from smartbot.providers.local_provider import OllamaProvider
@@ -25,6 +24,12 @@ PROVIDER_REGISTRY = {
 
 def build_agent(config_path: str = "config.yaml") -> Agent:
     """Create and configure the Agent from YAML configuration.
+
+    In 'memory', you use the default option:
+     * memory = JsonFileMemory(file_path="history.json", max_messages=10)
+    Or modify it to use the InMemoryBackend
+    *  memory=InMemoryBackend()
+    In that case you should add: from smartbot.memory.in_memory import InMemoryBackend
 
     :param config_path: defaults to "config.yaml"
     :type config_path: str
@@ -48,7 +53,6 @@ def build_agent(config_path: str = "config.yaml") -> Agent:
     return Agent(
         provider=provider,
         memory = JsonFileMemory(file_path="history.json", max_messages=10)
-        #memory=InMemoryBackend(),
     )
 
 
