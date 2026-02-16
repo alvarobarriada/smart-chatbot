@@ -28,7 +28,6 @@ def setup_logging(level: int = logging.INFO) -> None:
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
 
-    # Evita duplicación si setup_logging se llama más de una vez
     if not root_logger.handlers:
         root_logger.addHandler(handler)
 

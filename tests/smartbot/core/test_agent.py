@@ -3,11 +3,16 @@ import pytest
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import LLMProvider
 from smartbot.memory.in_memory import InMemoryBackend
+from smartbot.memory.models import Message
 
 
 class FakeProvider(LLMProvider):
-    def generate_response(self, prompt: str, history: list) -> str:
-        return f"echo: {prompt}"
+    def generate_response(
+        self,
+        prompt: str,
+        history: list[Message],
+    ) -> Message:
+        return Message(role="assistant", content=f"echo: {prompt}")
 
 
 def test_agent_flow():
@@ -22,8 +27,8 @@ def test_agent_flow():
     history = memory.get_history()
 
     assert len(history) == 2
-    assert history[0]["role"] == "user"
-    assert history[1]["role"] == "assistant"
+    assert history[0].role == "user"
+    assert history[1].role == "assistant"
 
 
 def test_agent_injection():
@@ -54,7 +59,6 @@ def test_agent_normalizes_dataclass_messages():
     provider = FakeProvider()
     agent = Agent(provider=provider, memory=memory)
 
-    # Simulamos que la memoria devuelve objeto con to_dict()
     memory._messages = [DataclassLikeMessage()]  # type: ignore
 
     response = agent.handle_message("Test")
@@ -67,7 +71,6 @@ def test_agent_raises_on_invalid_message_type():
     provider = FakeProvider()
     agent = Agent(provider=provider, memory=memory)
 
-    # Insertamos objeto no serializable ni dict
     memory._messages = [object()]  # type: ignore
 
     with pytest.raises(TypeError):
