@@ -10,33 +10,32 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Role = Literal["user", "assistant", "system"]
 
 class Message(BaseModel):
     """
-    Data Transfer Object (DTO) que representa un mensaje.
-    Principio: Estructura de Datos (solo guarda datos, sin lógica).
+    Data Transfer Object (DTO) that represents a Message.
+    Principle: Data Strcuture (just saves data, no logic).
     """
     role: Role
     content: str = Field(min_length=1)
     timestamp: datetime = Field(default_factory=datetime.now)
 
-    class Config:
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
     @field_validator('content')
     @classmethod
     def clean_content(cls, v: str) -> str:
-        """Limpia espacios en blanco y valida que no quede vacío."""
+        """Cleans the whitespaces and validates it isn't empty."""
         cleaned = v.strip()
         if not cleaned:
-            raise ValueError("El contenido no puede estar vacío (solo espacios)")
+            raise ValueError("The content can't be empty.")
         return cleaned
 
     def to_dict(self) -> dict:
-        """Serializo el objeto para guardarlo en JSON (sin timestamp)."""
+        """Serializes the object to save it in JSON (without timestamp)."""
         return {
             "role": self.role,
             "content": self.content,

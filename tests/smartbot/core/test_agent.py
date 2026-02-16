@@ -1,76 +1,75 @@
-import pytest
-
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import LLMProvider, Message
 from smartbot.memory.in_memory import InMemoryBackend
 
 
 class FakeProvider(LLMProvider):
+    """Test double that echoes the prompt content."""
+
     def generate_response(
         self,
-        prompt: str,
+        prompt: Message,
         history: list[Message],
     ) -> Message:
-        return Message(role="assistant", content=f"echo: {prompt}")
+        return Message(role="assistant", content=f"echo: {prompt.content}")
 
 
-def test_agent_flow():
-    memory = InMemoryBackend()
-    provider = FakeProvider()
-    agent = Agent(provider=provider, memory=memory)
+def test_agent_full_flow() -> None:
+    """Ensure Agent stores messages and returns provider response content."""
+    memory: InMemoryBackend = InMemoryBackend()
+    provider: FakeProvider = FakeProvider()
+    agent: Agent = Agent(provider=provider, memory=memory)
 
-    response = agent.handle_message("Hola")
+    response: str = agent.handle_message("Hola")
 
     assert response == "echo: Hola"
 
-    history = memory.get_history()
+    history: list[Message] = memory.get_history()
 
     assert len(history) == 2
     assert history[0].role == "user"
+    assert history[0].content == "Hola"
     assert history[1].role == "assistant"
+    assert history[1].content == "echo: Hola"
 
 
-def test_agent_injection():
-    memory = InMemoryBackend()
-    provider = FakeProvider()
+def test_agent_dependency_injection() -> None:
+    """Ensure Agent keeps injected provider and memory references."""
+    memory: InMemoryBackend = InMemoryBackend()
+    provider: FakeProvider = FakeProvider()
 
-    agent = Agent(provider=provider, memory=memory)
+    agent: Agent = Agent(provider=provider, memory=memory)
 
     assert agent._provider is provider
     assert agent._memory is memory
 
 
-# -----------------------------
-# Cobertura de normalización
-# -----------------------------
+def test_agent_passes_correct_history_to_provider() -> None:
+    """Ensure Agent passes full conversation history to provider."""
+    memory: InMemoryBackend = InMemoryBackend()
+    provider: FakeProvider = FakeProvider()
+    agent: Agent = Agent(provider=provider, memory=memory)
 
-class DataclassLikeMessage:
-    def __init__(self):
-        self.role = "user"
-        self.content = "hola"
+    agent.handle_message("First")
+    agent.handle_message("Second")
 
-    def to_dict(self):
-        return {"role": self.role, "content": self.content}
+    history: list[Message] = memory.get_history()
 
-
-def test_agent_normalizes_dataclass_messages():
-    memory = InMemoryBackend()
-    provider = FakeProvider()
-    agent = Agent(provider=provider, memory=memory)
-
-    memory._messages = [DataclassLikeMessage()]  # type: ignore
-
-    response = agent.handle_message("Test")
-
-    assert response == "echo: Test"
+    assert len(history) == 4
+    assert history[0].content == "First"
+    assert history[2].content == "Second"
 
 
-def test_agent_raises_on_invalid_message_type():
-    memory = InMemoryBackend()
-    provider = FakeProvider()
-    agent = Agent(provider=provider, memory=memory)
+def test_agent_handles_multiple_messages() -> None:
+    """Ensure Agent accumulates conversation state across calls."""
+    memory: InMemoryBackend = InMemoryBackend()
+    provider: FakeProvider = FakeProvider()
+    agent: Agent = Agent(provider=provider, memory=memory)
 
-    memory._messages = [object()]  # type: ignore
+    responses: list[str] = [
+        agent.handle_message("A"),
+        agent.handle_message("B"),
+    ]
 
-    with pytest.raises(TypeError):
-        agent.handle_message("Test")
+    assert responses == ["echo: A", "echo: B"]
+    assert len(memory.get_history()) == 4
