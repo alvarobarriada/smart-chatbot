@@ -1,5 +1,3 @@
-import pytest
-
 from smartbot.core.agent import Agent
 from smartbot.core.interfaces import LLMProvider, Message
 from smartbot.memory.in_memory import InMemoryBackend

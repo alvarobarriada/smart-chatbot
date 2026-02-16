@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Role = Literal["user", "assistant", "system"]
 
@@ -23,8 +23,7 @@ class Message(BaseModel):
     content: str = Field(min_length=1)
     timestamp: datetime = Field(default_factory=datetime.now)
 
-    class Config:
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
     @field_validator('content')
     @classmethod
