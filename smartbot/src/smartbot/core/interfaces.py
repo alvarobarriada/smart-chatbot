@@ -7,16 +7,25 @@ with language model Providers and Memory backends.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Literal, TypedDict
+from dataclasses import asdict, dataclass, field
+from datetime import datetime
+from typing import Literal
 
 Role = Literal["user", "assistant", "system"]
 
-class Message(TypedDict):
-    """Represents a single chat message."""
+@dataclass(frozen=True)
+class Message:
+    """
+    Data Transfer Object (DTO) que representa un mensaje.
+    Principio: Estructura de Datos (solo guarda datos, sin lógica).
+    """
     role: Role
     content: str
-    timestamp: float
+    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
+    def to_dict(self) -> dict:
+        """Serializo el objeto para guardarlo en JSON."""
+        return asdict(self)
 
 class ProviderError(RuntimeError):
     """Raised when a provider fails to generate a response."""
@@ -45,7 +54,7 @@ class MemoryBackend(ABC):
     """Abstract interface for conversation memory backends."""
 
     @abstractmethod
-    def add_message(self, role: Role, content: str) -> None:
+    def add_message(self, message: Message) -> None:
         """Store a new message.
 
         :param role: Message role (user/assistant/system).

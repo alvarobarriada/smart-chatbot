@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
-
-from smartbot.core.interfaces import LLMProvider, MemoryBackend
+from smartbot.core.interfaces import LLMProvider, MemoryBackend, Message
 from smartbot.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -30,30 +28,6 @@ class Agent:
         self._provider: LLMProvider = provider
         self._memory: MemoryBackend = memory
 
-    def _normalize_history(self, history: list[Any]) -> list[dict[str, Any]]:
-        """
-        Normalize history into a list of serializable dictionaries.
-        Supports both TypedDict and dataclass-based Message objects.
-
-        :param: history
-        :type history: list[Any]
-        :raises TypeError
-        :return: normalized
-        :rtype: list[dict[str, Any]]
-        """
-        normalized: list[dict[str, Any]] = []
-
-        for message in history:
-            if isinstance(message, dict):
-                normalized.append(message)
-            elif hasattr(message, "to_dict"):
-                normalized.append(message.to_dict())
-            else:
-                raise TypeError(
-                    f"Unsupported message type in history: {type(message).__name__}"
-                )
-
-        return normalized
 
     def handle_message(self, user_input: str) -> str:
         """
@@ -68,20 +42,22 @@ class Agent:
 
         logger.debug("Handling message from user")
 
-        self._memory.add_message("user", user_input)
+        user_message = Message(role="user", content=user_input)
+        self._memory.add_message(user_message)
+        #self._memory.add_message("user", user_input)
 
         history = self._memory.get_history()
         logger.debug("History length: %d", len(history))
 
-        normalized_history = self._normalize_history(history)
-
         response = self._provider.generate_response(
             prompt=user_input,
-            history=normalized_history,
+            history=history,
         )
 
         logger.debug("Generated response")
 
-        self._memory.add_message("assistant", response)
+        assistant_message = Message(role="assistant", content=response)
+        self._memory.add_message(assistant_message)
+        #self._memory.add_message("assistant", response)
 
         return response
