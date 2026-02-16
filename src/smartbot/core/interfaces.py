@@ -36,8 +36,11 @@ class Message(BaseModel):
         return cleaned
 
     def to_dict(self) -> dict:
-        """Serializo el objeto para guardarlo en JSON."""
-        return self.model_dump()
+        """Serializo el objeto para guardarlo en JSON (sin timestamp)."""
+        return {
+            "role": self.role,
+            "content": self.content,
+        }
 
 class ProviderError(RuntimeError):
     """Raised when a provider fails to generate a response."""
@@ -51,7 +54,7 @@ class LLMProvider(ABC):
     """Abstract interface for language model providers."""
 
     @abstractmethod
-    def generate_response(self, prompt: str, history: list[Message]) -> str:
+    def generate_response(self, prompt: Message, history: list[Message]) -> Message:
         """Generate a reply from the assistant.
 
         :param prompt: Latest user message.
