@@ -1,4 +1,4 @@
-from smartbot.memory.models import Message
+from smartbot.core.interfaces import Message
 
 from .base import BaseProvider
 from .models import EchoConfig, OllamaConfig, OpenAIConfig
