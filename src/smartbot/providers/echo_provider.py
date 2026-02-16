@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from smartbot.core.interfaces import Message
 
-from datetime import datetime
 from .base import BaseProvider
 from .models import EchoConfig, OllamaConfig, OpenAIConfig
 
