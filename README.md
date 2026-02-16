@@ -13,7 +13,8 @@ Sigue estos pasos para poner en marcha tu instancia de SmartBot:
 1. Clonar el repositorio e instalar dependencias
 Desde la carpeta raíz del proyecto, ejecuta el siguiente comando para sincronizar el entorno y las dependencias:
 ```cmd
-uv sync```
+uv sync
+```
 2. Configuración del entorno (`.env`)
 Crea un archivo llamado `.env` en la raíz del proyecto y añade tu clave de API si vas a utilizar OpenAI:
 ```
@@ -33,7 +34,7 @@ llm:
 ---
 ## Uso del proyecto
 Para iniciar el chatbot, una vez configurado el entorno, simplemente ejecuta:
-````cmd
+```cmd
 uv run python main.py
 ```
 ## Documentación de la configuración (API Interna)
