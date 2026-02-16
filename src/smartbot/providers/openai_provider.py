@@ -3,7 +3,7 @@ from typing import List, cast
 from openai import APIConnectionError, AuthenticationError, OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
-from smartbot.memory.models import Message
+from smartbot.core.interfaces import Message
 
 from .models import OpenAIConfig
 

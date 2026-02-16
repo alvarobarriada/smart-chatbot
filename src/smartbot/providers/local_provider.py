@@ -1,6 +1,6 @@
 import requests
 
-from smartbot.memory.models import Message
+from smartbot.core.interfaces import Message
 
 from .models import OllamaConfig
 
