@@ -68,7 +68,7 @@ max-returns = 4
 max-branches = 8
 
 [tool.ruff.lint.isort]
-known-first-party = ["smart-chatbot"]
+known-first-party = ["smartbot"]
 
 [tool.ruff.format]
 quote-style = "double"

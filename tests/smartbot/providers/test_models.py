@@ -1,7 +1,11 @@
 import pytest
-from pydantic import ValidationError, SecretStr
+from pydantic import SecretStr, ValidationError
+
 from smartbot.providers.models import (
-    BaseConfig, OpenAIConfig, OllamaConfig, EchoConfig, ChatBotConfig
+    BaseConfig,
+    ChatBotConfig,
+    OllamaConfig,
+    OpenAIConfig,
 )
 
 
@@ -17,7 +21,7 @@ def test_base_config_valid_ranges():
     ("top_p", -0.1),
     ("top_p", 1.1),
 ])
-def test_base_config_invalid_ranges(param, value):
+def test_base_config_invalid_ranges(param:str, value:float):
     """Verify that throw error if values are out of range."""
     with pytest.raises(ValidationError):
         BaseConfig(**{param: value})
@@ -27,7 +31,7 @@ def test_base_config_invalid_ranges(param, value):
 
 def test_openai_config_secret_key():
     """Ensure that API Key be handled as an API key."""
-    config = OpenAIConfig(api_key="sk-test-123")
+    config = OpenAIConfig(api_key=SecretStr("sk-test-123"))
     assert isinstance(config.api_key, SecretStr)
     # Al imprimirlo no debería verse la clave real
     assert "**********" in str(config.api_key)

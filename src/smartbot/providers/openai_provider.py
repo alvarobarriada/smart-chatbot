@@ -1,6 +1,6 @@
-from typing import List, cast
-
 from datetime import datetime
+from typing import Any, cast
+
 from openai import APIConnectionError, AuthenticationError, OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
@@ -10,7 +10,7 @@ from .models import OpenAIConfig
 
 
 class OpenaiProvider:
-    def __init__(self, config: OpenAIConfig, client: OpenAI = None) -> None:
+    def __init__(self, config: OpenAIConfig, client: Any = None) -> None:
         self.config = config
         self.client = client or OpenAI(api_key=config.api_key.get_secret_value())
 
@@ -32,7 +32,7 @@ class OpenaiProvider:
 
         response_llm = self.client.chat.completions.create(
             model = self.config.model_name,
-            messages=cast(List[ChatCompletionMessageParam],
+            messages=cast(list[ChatCompletionMessageParam],
                           [message.to_dict() for message in messages_history]),
             temperature=self.config.temperature,
             top_p=self.config.top_p,

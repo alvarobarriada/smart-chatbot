@@ -2,8 +2,6 @@ from typing import Protocol
 
 from smartbot.core.interfaces import Message
 
-from .models import ModelConfig
-
 
 class BaseProvider(Protocol):
     "Abstract class for define a common interfaz for any provider"

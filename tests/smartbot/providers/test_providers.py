@@ -1,11 +1,12 @@
-from unittest.mock import MagicMock, Mock
-import pytest
 from datetime import datetime
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+
 from smartbot.core.interfaces import Message
 from smartbot.providers.echo_provider import EchoProvider, OllamaConfig
 from smartbot.providers.local_provider import OllamaProvider
 from smartbot.providers.models import EchoConfig
-from unittest.mock import patch
 from smartbot.providers.openai_provider import OpenaiProvider
 
 
@@ -34,17 +35,21 @@ def test_echoprovider_performance_test():
     response = provider.generate_response(prompt, [])
     assert response.content == prompt
 
-def test_generate_response(mock_openai_client, mock_openai_config):
+def test_generate_response(
+    mock_openai_client: MagicMock,
+    mock_openai_config: MagicMock
+    ):
     provider = OpenaiProvider(client=mock_openai_client, config=mock_openai_config)
 
     prompt = Message(role="user", content="Test", timestamp=datetime.now())
     result = provider.generate_response(prompt, [])
 
+    assert result is not None
     assert result.content == "Test response"
 
 
 @patch('requests.post')
-def test_generate_response_success(mock_post):
+def test_generate_response_success(mock_post:MagicMock):
     mock_response = MagicMock()
     mock_response.json.return_value = {
         "message": {

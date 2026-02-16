@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
+
 from pydantic import BaseModel, Field, SecretStr
-from openai import OpenAI
 
 
 class BaseConfig(BaseModel):

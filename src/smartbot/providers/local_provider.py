@@ -1,7 +1,7 @@
+from datetime import datetime
+
 import requests
 
-
-from datetime import datetime
 from smartbot.core.interfaces import Message
 
 from .models import OllamaConfig
