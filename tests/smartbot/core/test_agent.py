@@ -1,9 +1,8 @@
 import pytest
 
 from smartbot.core.agent import Agent
-from smartbot.core.interfaces import LLMProvider
+from smartbot.core.interfaces import LLMProvider, Message
 from smartbot.memory.in_memory import InMemoryBackend
-from smartbot.memory.models import Message
 
 
 class FakeProvider(LLMProvider):
