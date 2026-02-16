@@ -8,12 +8,10 @@ from .models import ModelConfig
 class BaseProvider(Protocol):
     "Abstract class for define a common interfaz for any provider"
 
-    def __init__(self, config:ModelConfig) -> None:
+    def __init__(self) -> None:
         """
         Init the provider with the optional configuration
 
-        :param config: Dictionary with api_keys, URLs, models, temperature, ...
-        :type config: Dict[str, str] | None
         """
         ...
 

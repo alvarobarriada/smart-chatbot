@@ -10,9 +10,10 @@ from .models import OpenAIConfig
 
 
 class OpenaiProvider:
-    def __init__(self, config: OpenAIConfig) -> None:
+    def __init__(self, config: OpenAIConfig, client: OpenAI = None) -> None:
         self.config = config
-        self.client = OpenAI(api_key=config.api_key.get_secret_value())
+        self.client = client or OpenAI(api_key=config.api_key.get_secret_value())
+
 
     def generate_response(self, prompt: Message, history: list[Message]) -> Message|None:
         """

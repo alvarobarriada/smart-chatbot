@@ -1,5 +1,6 @@
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, SecretStr
+from openai import OpenAI
 
 
 class BaseConfig(BaseModel):
@@ -13,6 +14,8 @@ class OpenAIConfig(BaseConfig):
     provider: Literal["openai"] = "openai"
     api_key: SecretStr
     model_name: str = "gpt-4o"
+
+
 
 class OllamaConfig(BaseConfig):
     """Settings for ollama"""
